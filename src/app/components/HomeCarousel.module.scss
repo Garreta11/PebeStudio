@@ -32,12 +32,6 @@
   -webkit-user-select: none;
   user-select: none;
   overflow: hidden;
-
-  &:hover {
-    .media {
-      scale: 1.05;
-    }
-  }
 }
 
 .media {

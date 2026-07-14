@@ -1,0 +1,32 @@
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #0127ff;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9999;
+  will-change: transform;
+  transition:
+    width 0.3s ease,
+    height 0.3s ease,
+    opacity 0.3s ease;
+  /* mix-blend-mode: difference; */
+}
+
+.hover {
+  width: 30px;
+  height: 30px;
+}
+
+.white {
+  background-color: #ffffff;
+}
+
+.hideNativeCursor,
+.hideNativeCursor * {
+  cursor: none !important;
+}

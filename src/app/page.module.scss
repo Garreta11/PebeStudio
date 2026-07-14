@@ -1,0 +1,22 @@
+.page {
+  position: relative;
+  height: 100vh;
+  background: #fafafa;
+
+  @media (prefers-color-scheme: dark) {
+    background: #000;
+  }
+}
+
+.main {
+  height: 100%;
+}
+
+.empty {
+  padding: 5rem 2rem 0;
+  color: #71717a;
+}
+
+.emptyLink {
+  text-decoration: underline;
+}

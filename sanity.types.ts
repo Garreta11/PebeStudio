@@ -23,7 +23,7 @@ export type LinkItem = {
 
 export type SocialLink = {
   _type: "socialLink";
-  platform: "instagram" | "linkedin" | "behance" | "dribbble" | "twitter";
+  platform: "instagram" | "facebook";
   url: string;
 };
 
@@ -39,6 +39,24 @@ export type SanityFileAssetReference = {
   _type: "reference";
   _weak?: boolean;
   [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
+};
+
+export type GalleryItem = {
+  _type: "galleryItem";
+  mediaType: "image" | "gif" | "video";
+  image?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+  video?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: "file";
+  };
 };
 
 export type ProjectReference = {
@@ -108,15 +126,11 @@ export type Project = {
     _type: "block";
     _key: string;
   }>;
-  gallery?: Array<{
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: "image";
-    _key: string;
-  }>;
+  gallery?: Array<
+    {
+      _key: string;
+    } & GalleryItem
+  >;
   seo?: Seo;
 };
 
@@ -346,6 +360,7 @@ export type AllSanitySchemaTypes =
   | SocialLink
   | SanityImageAssetReference
   | SanityFileAssetReference
+  | GalleryItem
   | ProjectReference
   | HomepageItem
   | Seo
@@ -424,7 +439,7 @@ export type SITE_SETTINGS_QUERY_RESULT =
         alt: null;
       } | null;
       socialLinks: Array<{
-        platform: "behance" | "dribbble" | "instagram" | "linkedin" | "twitter";
+        platform: "facebook" | "instagram";
         url: string;
       }> | null;
     }
@@ -432,7 +447,7 @@ export type SITE_SETTINGS_QUERY_RESULT =
 
 // Source: src/sanity/lib/queries.ts
 // Variable: PROJECTS_QUERY
-// Query: *[_type == "project" && defined(slug.current)]  | order(year desc) {    _id,    title,    "slug": slug.current,    client,    year,    description,    categories,    "coverImage": gallery[0]{   asset->{    _id,    url,    metadata { lqip, dimensions }  },  alt },  }
+// Query: *[_type == "project" && defined(slug.current)]  | order(year desc) {    _id,    title,    "slug": slug.current,    client,    year,    description,    categories,    "coverImage": gallery[0].image{   asset->{    _id,    url,    metadata { lqip, dimensions }  },  alt },  }
 export type PROJECTS_QUERY_RESULT = Array<{
   _id: string;
   title: string;
@@ -473,7 +488,7 @@ export type PROJECTS_QUERY_RESULT = Array<{
 
 // Source: src/sanity/lib/queries.ts
 // Variable: PROJECT_QUERY
-// Query: *[_type == "project" && slug.current == $slug][0]{    _id,    title,    client,    year,    description,    categories,    gallery[]{   asset->{    _id,    url,    metadata { lqip, dimensions }  },  alt },  }
+// Query: *[_type == "project" && slug.current == $slug][0]{    _id,    title,    client,    year,    description,    categories,    gallery[]{      mediaType,      image{   asset->{    _id,    url,    metadata { lqip, dimensions }  },  alt },      "videoUrl": video.asset->url,    },  }
 export type PROJECT_QUERY_RESULT = {
   _id: string;
   title: string;
@@ -499,15 +514,19 @@ export type PROJECT_QUERY_RESULT = {
   }> | null;
   categories: string | null;
   gallery: Array<{
-    asset: {
-      _id: string;
-      url: string;
-      metadata: {
-        lqip: string | null;
-        dimensions: SanityImageDimensions | null;
+    mediaType: "gif" | "image" | "video";
+    image: {
+      asset: {
+        _id: string;
+        url: string;
+        metadata: {
+          lqip: string | null;
+          dimensions: SanityImageDimensions | null;
+        } | null;
       } | null;
+      alt: string | null;
     } | null;
-    alt: string | null;
+    videoUrl: string | null;
   }> | null;
 } | null;
 
@@ -612,7 +631,7 @@ export type ABOUT_QUERY_RESULT =
         _key: string;
       }> | null;
       social: Array<{
-        platform: "behance" | "dribbble" | "instagram" | "linkedin" | "twitter";
+        platform: "facebook" | "instagram";
         url: string;
       }> | null;
     }
@@ -623,8 +642,8 @@ import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
     '\n  *[_id == "siteSettings"][0]{\n    title,\n    tagline,\n    description,\n    logo{ \n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions }\n  },\n  alt\n },\n    socialLinks[]{ platform, url },\n  }\n': SITE_SETTINGS_QUERY_RESULT;
-    '\n  *[_type == "project" && defined(slug.current)]\n  | order(year desc) {\n    _id,\n    title,\n    "slug": slug.current,\n    client,\n    year,\n    description,\n    categories,\n    "coverImage": gallery[0]{ \n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions }\n  },\n  alt\n },\n  }\n': PROJECTS_QUERY_RESULT;
-    '\n  *[_type == "project" && slug.current == $slug][0]{\n    _id,\n    title,\n    client,\n    year,\n    description,\n    categories,\n    gallery[]{ \n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions }\n  },\n  alt\n },\n  }\n': PROJECT_QUERY_RESULT;
+    '\n  *[_type == "project" && defined(slug.current)]\n  | order(year desc) {\n    _id,\n    title,\n    "slug": slug.current,\n    client,\n    year,\n    description,\n    categories,\n    "coverImage": gallery[0].image{ \n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions }\n  },\n  alt\n },\n  }\n': PROJECTS_QUERY_RESULT;
+    '\n  *[_type == "project" && slug.current == $slug][0]{\n    _id,\n    title,\n    client,\n    year,\n    description,\n    categories,\n    gallery[]{\n      mediaType,\n      image{ \n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions }\n  },\n  alt\n },\n      "videoUrl": video.asset->url,\n    },\n  }\n': PROJECT_QUERY_RESULT;
     '\n  *[_type == "project" && defined(slug.current)]{\n    "slug": slug.current\n  }\n': PROJECT_SLUGS_QUERY_RESULT;
     '\n  *[_id == "homepage"][0]{\n    items[]{\n      mediaType,\n      image{ \n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions }\n  },\n  alt\n },\n      "videoUrl": video.asset->url,\n      project->{\n        title,\n        "slug": slug.current\n      }\n    }\n  }\n': HOMEPAGE_QUERY_RESULT;
     '\n  *[_id == "about"][0]{\n    mainDescription,\n    exhibitions[]{ year, title },\n    press[]{ name, url },\n    interviews[]{ name, url },\n    contact,\n    social[]{ platform, url },\n  }\n': ABOUT_QUERY_RESULT;

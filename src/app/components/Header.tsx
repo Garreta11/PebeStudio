@@ -9,6 +9,9 @@ export function Header() {
   const pathname = usePathname();
   const isHomepage = pathname === "/";
   const isArchive = pathname === "/archive";
+  const isProjectPage = pathname?.startsWith("/archive/");
+
+  if (isProjectPage) return null;
 
   return (
     <header

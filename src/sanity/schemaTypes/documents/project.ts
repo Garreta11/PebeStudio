@@ -57,15 +57,7 @@ export const project = defineType({
       title: 'Galería',
       type: 'array',
       group: 'content',
-      of: [
-        defineArrayMember({
-          type: 'image',
-          options: { hotspot: true },
-          fields: [
-            defineField({ name: 'alt', title: 'Alt Text', type: 'string' }),
-          ],
-        }),
-      ],
+      of: [defineArrayMember({ type: 'galleryItem' })],
     }),
     defineField({
       name: 'seo',
@@ -90,7 +82,7 @@ export const project = defineType({
     select: {
       title: 'title',
       subtitle: 'client',
-      media: 'gallery.0',
+      media: 'gallery.0.image',
     },
   },
 })

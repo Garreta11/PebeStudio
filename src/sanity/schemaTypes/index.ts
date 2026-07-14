@@ -6,9 +6,20 @@ import { about } from './documents/about'
 import { project } from './documents/project'
 import { seo } from './objects/seo'
 import { homepageItem } from './objects/homepageItem'
+import { galleryItem } from './objects/galleryItem'
 import { socialLink } from './objects/socialLink'
 import { linkItem } from './objects/linkItem'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [siteSettings, homepage, about, project, seo, homepageItem, socialLink, linkItem],
+  types: [
+    siteSettings,
+    homepage,
+    about,
+    project,
+    seo,
+    homepageItem,
+    galleryItem,
+    socialLink,
+    linkItem,
+  ],
 }

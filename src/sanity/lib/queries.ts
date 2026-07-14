@@ -29,7 +29,7 @@ export const PROJECTS_QUERY = defineQuery(/* groq */ `
     year,
     description,
     categories,
-    "coverImage": gallery[0]{ ${imageFragment} },
+    "coverImage": gallery[0].image{ ${imageFragment} },
   }
 `)
 
@@ -41,7 +41,11 @@ export const PROJECT_QUERY = defineQuery(/* groq */ `
     year,
     description,
     categories,
-    gallery[]{ ${imageFragment} },
+    gallery[]{
+      mediaType,
+      image{ ${imageFragment} },
+      "videoUrl": video.asset->url,
+    },
   }
 `)
 

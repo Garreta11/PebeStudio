@@ -6,7 +6,9 @@ import { notFound } from "next/navigation";
 import { client } from "@/sanity/lib/client";
 import { sanityFetch } from "@/sanity/lib/live";
 import { PROJECT_QUERY, PROJECT_SLUGS_QUERY } from "@/sanity/lib/queries";
+import { ProjectGallery } from "./ProjectGallery";
 import styles from "./page.module.scss";
+import Link from "next/link";
 
 export async function generateStaticParams() {
   return client.withConfig({ useCdn: false }).fetch(PROJECT_SLUGS_QUERY);
@@ -37,7 +39,27 @@ export default async function ProjectPage({ params }: Props) {
 
   return (
     <article className={styles.article}>
-      <header className={styles.header}>
+      <div className={styles.article__content}>
+        <h1 className={styles.article__content__title}>{project.title}</h1>
+        <div className={styles.article__content__wrapper}>
+          <div className={styles.article__content__description}>
+            <PortableText value={project.description} />
+          </div>
+
+          {project.gallery && project.gallery.length > 0 && (
+            <ProjectGallery images={project.gallery} />
+          )}
+        </div>
+        <div className={styles.article__content__close}>
+          <Link href="/archive">
+            <p>close</p>
+          </Link>
+        </div>
+      </div>
+
+      
+
+      {/* <header className={styles.header}>
         <h1 className={styles.title}>{project.title}</h1>
         <p className={styles.meta}>
           {[project.client, project.year].filter(Boolean).join(" · ")}
@@ -69,7 +91,7 @@ export default async function ProjectPage({ params }: Props) {
             </div>
           ))}
         </div>
-      )}
+      )} */}
     </article>
   );
 }

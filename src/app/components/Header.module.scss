@@ -29,6 +29,10 @@
   letter-spacing: 0.025em;
   color: inherit;
   text-decoration: none;
+  @media (max-width: 700px) {
+    font-size: 1rem;
+    white-space: nowrap;
+  }
 }
 
 .nav {
@@ -37,6 +41,12 @@
   gap: 0rem;
   font-size: 1.45rem;
   font-weight: 500;
+
+  @media (max-width: 700px) {
+    font-size: 1rem;
+    grid-column: 4 / 5;
+    justify-self: end;
+  }
 }
 
 .navLink {

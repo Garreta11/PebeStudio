@@ -1,12 +1,11 @@
 .page {
-  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--white);
   color: var(--black);
 }
 
 .main {
   padding: 6rem 1rem 4rem;
-  height: 100%;
 }
 
 .list {
@@ -36,17 +35,47 @@
   text-decoration: none;
 
   @media (max-width: 700px) {
-    grid-template-columns: 1fr;
-    gap: 0.25rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
   }
 }
 
 .title {
   font-weight: 500;
+
+  @media (max-width: 700px) {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .meta {
   color: var(--black);
+}
+
+.categories {
+  @media (max-width: 700px) {
+    display: none;
+  }
+}
+
+.client {
+  @media (max-width: 700px) {
+    flex: 0 0 6rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.year {
+  @media (max-width: 700px) {
+    flex: 0 0 3rem;
+  }
 }
 
 .empty {

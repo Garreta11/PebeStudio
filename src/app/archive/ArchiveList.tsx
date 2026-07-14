@@ -84,9 +84,15 @@ export function ArchiveList({ projects }: Props) {
           >
             <Link href={`/archive/${project.slug}`} className={styles.row}>
               <span className={styles.title}>{project.title}</span>
-              <span className={styles.meta}>{project.categories}</span>
-              <span className={styles.meta}>{project.client}</span>
-              <span className={styles.meta}>{project.year}</span>
+              <span className={`${styles.meta} ${styles.categories}`}>
+                {project.categories}
+              </span>
+              <span className={`${styles.meta} ${styles.client}`}>
+                {project.client}
+              </span>
+              <span className={`${styles.meta} ${styles.year}`}>
+                {project.year}
+              </span>
             </Link>
           </li>
         ))}

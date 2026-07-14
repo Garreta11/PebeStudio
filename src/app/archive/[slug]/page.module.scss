@@ -10,8 +10,22 @@
     grid-template-columns: repeat(10, 1fr);
     height: 100%;
 
+    @media (max-width: 700px) {
+      // Fixed-length tracks (not auto/content-derived) so the full-bleed
+      // 100vw media item below can't blow up this row's column sizing.
+      grid-template-columns: 6rem 1fr 4rem;
+      grid-template-rows: auto 1fr auto;
+      gap: .5rem;
+    }
+
     &__title {
       grid-column: 1 / 3;
+
+      @media (max-width: 700px) {
+        grid-column: 1;
+        grid-row: 1;
+        font-size: 1rem;
+      }
     }
 
     &__wrapper {
@@ -20,17 +34,39 @@
       flex-direction: column;
       height: 100%;
       min-height: 0;
+
+      // Promote description/media/counter to be direct grid items of
+      // __content so they can be placed independently on mobile.
+      @media (max-width: 700px) {
+        display: contents;
+      }
     }
 
     &__description {
       flex-shrink: 0;
       margin-bottom: 3rem;
+
+      @media (max-width: 700px) {
+        grid-column: 2;
+        grid-row: 1;
+        margin-bottom: 0;
+      }
     }
 
     &__close {
       grid-column: auto;
       width: fit-content;
       justify-self: end;
+
+      a {
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      @media (max-width: 700px) {
+        grid-column: 3;
+        grid-row: 1;
+      }
     }
 
     &__media {
@@ -40,11 +76,27 @@
       cursor: pointer;
       overflow: hidden;
 
+      // Break out of the article's padding so the gallery bleeds edge to
+      // edge on mobile instead of staying inset with the text content.
+      @media (max-width: 700px) {
+        /* grid-column: 1 / -1; */
+        grid-row: 2;
+        width: 100vw;
+        margin-left: -1rem;
+      }
+
       &__image {
         display: block;
         width: 100%;
         height: 100%;
         object-fit: contain;
+
+        @media (max-width: 700px) {
+          width: 80%;
+          height: auto;
+          display: block;
+          margin: 0 auto;
+        }
       }
 
       &__counter {
@@ -54,6 +106,11 @@
         line-height: 1.15;
         margin-top: 1rem;
         font-variant-numeric: tabular-nums;
+
+        @media (max-width: 700px) {
+          grid-column: 1 / -1;
+          grid-row: 3;
+        }
       }
     }
   }

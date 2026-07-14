@@ -1,5 +1,5 @@
 .page {
-  min-height: 100vh;
+  min-height: 100dvh;
   background: #0127ff;
 }
 
@@ -25,6 +25,9 @@
   gap: 2rem;
   min-width: 0;
   color: var(--white);
+  @media (max-width: 700px) {
+    gap: 1;
+  }
 }
 
 .title {
@@ -46,8 +49,6 @@
   margin: 0;
   padding: 0;
   list-style: none;
-  font-size: 1.45rem;
-  line-height: 1.15;
 }
 
 .listItem {

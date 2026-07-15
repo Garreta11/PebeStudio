@@ -77,12 +77,16 @@ export function CustomCursor() {
       y: mouse.y,
     }));
 
-    const handleMove = (e: MouseEvent) => {
+    const updatePosition = (x: number, y: number) => {
       dot.style.opacity = "1";
       path.style.opacity = variantRef.current === "default" ? "1" : "0";
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
+      mouse.x = x;
+      mouse.y = y;
       dot.style.transform = `translate3d(${mouse.x}px, ${mouse.y}px, 0) translate(-50%, -50%)`;
+    };
+
+    const handleMove = (e: MouseEvent) => {
+      updatePosition(e.clientX, e.clientY);
     };
 
     const handleOver = (e: MouseEvent) => {
@@ -99,6 +103,40 @@ export function CustomCursor() {
         dot.classList.remove(styles.hover);
         path.style.strokeWidth = `${TRAIL_WIDTH}px`;
       }
+    };
+
+    // On touch devices there's no persistent pointer, so the trail is
+    // revealed on touchstart, follows the finger on touchmove, and fades
+    // out again on touchend/touchcancel.
+    const handleTouchStart = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+      updatePosition(touch.clientX, touch.clientY);
+      trailPositions.forEach((pos) => {
+        pos.x = touch.clientX;
+        pos.y = touch.clientY;
+      });
+      const target = document.elementFromPoint(
+        touch.clientX,
+        touch.clientY,
+      ) as HTMLElement | null;
+      if (target?.closest(HOVER_SELECTOR)) {
+        dot.classList.add(styles.hover);
+        path.style.strokeWidth = `${TRAIL_HOVER_WIDTH}px`;
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+      updatePosition(touch.clientX, touch.clientY);
+    };
+
+    const handleTouchEnd = () => {
+      dot.style.opacity = "0";
+      path.style.opacity = "0";
+      dot.classList.remove(styles.hover);
+      path.style.strokeWidth = `${TRAIL_WIDTH}px`;
     };
 
     let frame: number;
@@ -134,12 +172,22 @@ export function CustomCursor() {
     window.addEventListener("mousemove", handleMove);
     document.addEventListener("mouseover", handleOver);
     document.addEventListener("mouseout", handleOut);
+    window.addEventListener("touchstart", handleTouchStart, {
+      passive: true,
+    });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd);
+    window.addEventListener("touchcancel", handleTouchEnd);
 
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener("mousemove", handleMove);
       document.removeEventListener("mouseover", handleOver);
       document.removeEventListener("mouseout", handleOut);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
+      window.removeEventListener("touchcancel", handleTouchEnd);
     };
   }, [isStudio]);
 

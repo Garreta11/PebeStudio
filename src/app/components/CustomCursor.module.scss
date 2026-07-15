@@ -17,9 +17,25 @@
   /* mix-blend-mode: difference; */
 }
 
+.trailSvg {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+.trailLine {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0;
+  transition: stroke-width 0.3s ease;
+}
+
 .hover {
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
 }
 
 .white {

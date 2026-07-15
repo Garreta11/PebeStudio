@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { sanityFetch } from "@/sanity/lib/live";
 import { ABOUT_QUERY } from "@/sanity/lib/queries";
 import { Header } from "../components/Header";
+import { AboutReveal } from "./AboutReveal";
 import styles from "./page.module.scss";
 
 export const metadata: Metadata = {
@@ -28,7 +29,7 @@ export default async function AboutPage() {
     <div className={styles.page}>
       {/* <Header /> */}
 
-      <main className={styles.grid}>
+      <AboutReveal className={styles.grid}>
         <section className={styles.column}>
           <h2 className={styles.title}>Info</h2>
           {about?.mainDescription && (
@@ -116,7 +117,7 @@ export default async function AboutPage() {
             ))}
           </ul>
         </section>
-      </main>
+      </AboutReveal>
     </div>
   );
 }

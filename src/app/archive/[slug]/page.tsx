@@ -6,9 +6,10 @@ import { notFound } from "next/navigation";
 import { client } from "@/sanity/lib/client";
 import { sanityFetch } from "@/sanity/lib/live";
 import { PROJECT_QUERY, PROJECT_SLUGS_QUERY } from "@/sanity/lib/queries";
+import { CloseLink } from "./CloseLink";
 import { ProjectGallery } from "./ProjectGallery";
+import { ProjectReveal } from "./ProjectReveal";
 import styles from "./page.module.scss";
-import Link from "next/link";
 
 export async function generateStaticParams() {
   return client.withConfig({ useCdn: false }).fetch(PROJECT_SLUGS_QUERY);
@@ -39,7 +40,7 @@ export default async function ProjectPage({ params }: Props) {
 
   return (
     <article className={styles.article}>
-      <div className={styles.article__content}>
+      <ProjectReveal className={styles.article__content}>
         <h1 className={styles.article__content__title}>{project.title}</h1>
         <div className={styles.article__content__wrapper}>
           <div className={styles.article__content__description}>
@@ -51,11 +52,11 @@ export default async function ProjectPage({ params }: Props) {
           )}
         </div>
         <div className={styles.article__content__close}>
-          <Link href="/archive">
+          <CloseLink href="/archive">
             <p>X</p>
-          </Link>
+          </CloseLink>
         </div>
-      </div>
+      </ProjectReveal>
     </article>
   );
 }

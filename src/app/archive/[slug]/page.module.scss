@@ -4,22 +4,29 @@
   padding: 1rem;
   height: 100dvh;
   overflow: hidden;
+  
+  @media (max-width: 700px) {
+    padding: 0.5rem;
+  }
 
   &__content {
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     height: 100%;
+    gap: 1rem;
+    line-height: 1;
 
     @media (max-width: 700px) {
       // Fixed-length tracks (not auto/content-derived) so the full-bleed
       // 100vw media item below can't blow up this row's column sizing.
-      grid-template-columns: 6rem 1fr 4rem;
+      grid-template-columns: 5rem 1fr calc(2rem - 15px);
       grid-template-rows: auto 1fr auto;
-      gap: .5rem;
     }
 
     &__title {
+      font-size: 1.5rem;
       grid-column: 1 / 3;
+      text-transform: uppercase;
 
       @media (max-width: 700px) {
         grid-column: 1;
@@ -45,8 +52,11 @@
     &__description {
       flex-shrink: 0;
       margin-bottom: 3rem;
-
+      font-size: 1.5rem;
+      font-weight: 600;
+      
       @media (max-width: 700px) {
+        font-size: 1rem;
         grid-column: 2;
         grid-row: 1;
         margin-bottom: 0;
@@ -57,6 +67,7 @@
       grid-column: auto;
       width: fit-content;
       justify-self: end;
+      font-size: 1.5rem;
 
       a {
         text-decoration: none;
@@ -99,15 +110,33 @@
         }
       }
 
+      &__track {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        will-change: transform;
+      }
+
+      &__slide {
+        flex: 0 0 100%;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
       &__counter {
         flex-shrink: 0;
         font-variation-settings: 'slnt' 0, 'MONO' 0;
         font-weight: 600;
-        line-height: 1.15;
+        line-height: 1;
+        font-size: 1.5rem;
         margin-top: 1rem;
         font-variant-numeric: tabular-nums;
-
+        
         @media (max-width: 700px) {
+          font-size: 1rem;
           grid-column: 1 / -1;
           grid-row: 3;
         }

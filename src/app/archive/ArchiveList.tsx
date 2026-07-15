@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 
@@ -12,10 +13,38 @@ type Props = {
 };
 
 export function ArchiveList({ projects }: Props) {
+  const router = useRouter();
+  const pageRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const previewContentRef = useRef<HTMLDivElement>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+
+  const handleNavigate = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => {
+    // Let modified/non-primary clicks (open in new tab, etc.) behave normally.
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+      return;
+    }
+    e.preventDefault();
+
+    if (!pageRef.current) {
+      router.push(href);
+      return;
+    }
+
+    // Opacity-only: the preview thumbnail is position:fixed, and a
+    // transform on this wrapper would reassign its containing block to
+    // here instead of the viewport, breaking its positioning mid-fade.
+    gsap.to(pageRef.current, {
+      opacity: 0,
+      duration: 0.4,
+      ease: "power2.in",
+      onComplete: () => router.push(href),
+    });
+  };
 
   useLayoutEffect(() => {
     const items = listRef.current?.querySelectorAll(`.${styles.item}`);
@@ -69,7 +98,7 @@ export function ArchiveList({ projects }: Props) {
   const hoveredProject = projects.find((project) => project._id === hoveredId);
 
   return (
-    <>
+    <div ref={pageRef}>
       <ul ref={listRef} className={styles.list}>
         {projects.map((project) => (
           <li
@@ -82,7 +111,11 @@ export function ArchiveList({ projects }: Props) {
               )
             }
           >
-            <Link href={`/archive/${project.slug}`} className={styles.row}>
+            <Link
+              href={`/archive/${project.slug}`}
+              className={styles.row}
+              onClick={(e) => handleNavigate(e, `/archive/${project.slug}`)}
+            >
               <span className={styles.title}>{project.title}</span>
               <span className={`${styles.meta} ${styles.categories}`}>
                 {project.categories}
@@ -119,6 +152,6 @@ export function ArchiveList({ projects }: Props) {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

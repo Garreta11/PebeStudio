@@ -38,6 +38,7 @@ export function CustomCursor() {
   const gradientRef = useRef<SVGLinearGradientElement>(null);
   const pathname = usePathname();
   const [variant, setVariant] = useState<CursorVariant>("default");
+  const variantRef = useRef<CursorVariant>("default");
   // The Sanity Studio admin panel shares this root layout but needs its
   // native cursor for editing, so it opts out of the custom cursor.
   const isStudio = pathname?.startsWith("/studio");
@@ -46,7 +47,9 @@ export function CustomCursor() {
   useEffect(() => {
     if (isStudio) return;
     const handleVariant = (e: Event) => {
-      setVariant((e as CustomEvent<CursorVariant>).detail);
+      const next = (e as CustomEvent<CursorVariant>).detail;
+      variantRef.current = next;
+      setVariant(next);
     };
     window.addEventListener(CURSOR_VARIANT_EVENT, handleVariant);
     return () =>
@@ -76,7 +79,7 @@ export function CustomCursor() {
 
     const handleMove = (e: MouseEvent) => {
       dot.style.opacity = "1";
-      path.style.opacity = "1";
+      path.style.opacity = variantRef.current === "default" ? "1" : "0";
       mouse.x = e.clientX;
       mouse.y = e.clientY;
       dot.style.transform = `translate3d(${mouse.x}px, ${mouse.y}px, 0) translate(-50%, -50%)`;

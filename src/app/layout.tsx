@@ -18,7 +18,7 @@ const groteskFont = localFont({
 export const metadata: Metadata = {
   title: {
     default: "PEBE STUDIO",
-    template: "%s -- PEBE STUDIO",
+    template: "%s — PEBE STUDIO",
   },
   description: "Pebe Studio — portfolio",
 };

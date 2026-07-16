@@ -1,4 +1,4 @@
-import { PortableText } from "@portabletext/react";
+import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import type { Metadata } from "next";
 
 import { sanityFetch } from "@/sanity/lib/live";
@@ -15,6 +15,16 @@ const SOCIAL_LABELS: Record<string, string> = {
   instagram: "Instagram",
   linkedin: "LinkedIn",
   facebook: "Facebook",
+};
+
+const portableTextComponents: PortableTextComponents = {
+  marks: {
+    link: ({ value, children }) => (
+      <a href={value?.href} target="_blank" rel="noopener noreferrer">
+        {children}
+      </a>
+    ),
+  },
 };
 
 export default async function AboutPage() {
@@ -97,7 +107,10 @@ export default async function AboutPage() {
           <h2 className={styles.title}>Contact</h2>
           {about?.contact && (
             <div className={styles.body}>
-              <PortableText value={about.contact} />
+              <PortableText
+                value={about.contact}
+                components={portableTextComponents}
+              />
             </div>
           )}
 

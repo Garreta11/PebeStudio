@@ -16,7 +16,7 @@ type Props = {
   items: HomeCarouselItem[];
 };
 
-const BASE_SPEED = 50; // ambient px/s once everything has settled
+const BASE_SPEED = 1000; // ambient px/s once everything has settled
 const INERTIA_DECAY = 0.09; // per-second decay factor easing velocity toward the ambient speed
 const DRAG_THRESHOLD = 5; // px of movement before a press becomes a drag
 const COPIES = 3; // one set before, the original, one set after

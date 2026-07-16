@@ -10,14 +10,14 @@ const HOVER_SELECTOR =
 
 // Number of points sampled along the trail. Raise for a longer trail,
 // lower (or 0) for a shorter/no trail.
-const TRAIL_LENGTH = 25;
+const TRAIL_LENGTH = 10;
 
 // How quickly each trailing point eases toward the point ahead of it (0-1).
 // Lower = looser, more delayed trail. Higher = tighter, snappier trail.
 const TRAIL_EASE = 0.5;
 
 // Stroke width (px) of the trail line.
-const TRAIL_WIDTH = 8;
+const TRAIL_WIDTH = 10;
 const TRAIL_HOVER_WIDTH = 20;
 
 export type CursorVariant = "default" | "arrow-left" | "arrow-right";

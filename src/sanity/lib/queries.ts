@@ -9,13 +9,22 @@ const imageFragment = /* groq */ `
   alt
 `
 
+const seoFragment = /* groq */ `
+  seo{
+    title,
+    description,
+    image{ ${imageFragment} },
+  }
+`
+
 export const SITE_SETTINGS_QUERY = defineQuery(/* groq */ `
-  *[_id == "siteSettings"][0]{
+  *[_type == "siteSettings" && _id == "siteSettings"][0]{
     title,
     tagline,
     description,
     logo{ ${imageFragment} },
     socialLinks[]{ platform, url },
+    ${seoFragment},
   }
 `)
 
@@ -46,6 +55,7 @@ export const PROJECT_QUERY = defineQuery(/* groq */ `
       image{ ${imageFragment} },
       "videoUrl": video.asset->url,
     },
+    ${seoFragment},
   }
 `)
 
@@ -56,7 +66,7 @@ export const PROJECT_SLUGS_QUERY = defineQuery(/* groq */ `
 `)
 
 export const HOMEPAGE_QUERY = defineQuery(/* groq */ `
-  *[_id == "homepage"][0]{
+  *[_type == "homepage" && _id == "homepage"][0]{
     items[]{
       mediaType,
       image{ ${imageFragment} },
@@ -70,7 +80,7 @@ export const HOMEPAGE_QUERY = defineQuery(/* groq */ `
 `)
 
 export const ABOUT_QUERY = defineQuery(/* groq */ `
-  *[_id == "about"][0]{
+  *[_type == "about" && _id == "about"][0]{
     mainDescription,
     exhibitions[]{ year, title },
     press[]{ name, url },

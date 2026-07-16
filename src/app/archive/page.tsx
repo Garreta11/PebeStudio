@@ -7,6 +7,17 @@ import styles from "./page.module.scss";
 
 export const metadata: Metadata = {
   title: "Archive",
+  description: "Selected projects from Pebe Studio.",
+  alternates: { canonical: "/archive" },
+  openGraph: {
+    title: "Archive — PEBE STUDIO",
+    description: "Selected projects from Pebe Studio.",
+    url: "/archive",
+  },
+  twitter: {
+    title: "Archive — PEBE STUDIO",
+    description: "Selected projects from Pebe Studio.",
+  },
 };
 
 export default async function ArchivePage() {

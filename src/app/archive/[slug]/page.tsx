@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { client } from "@/sanity/lib/client";
 import { sanityFetch } from "@/sanity/lib/live";
 import { PROJECT_QUERY, PROJECT_SLUGS_QUERY } from "@/sanity/lib/queries";
+import { portableTextToPlainText } from "@/lib/seo";
 import { CloseLink } from "./CloseLink";
 import { ProjectGallery } from "./ProjectGallery";
 import { ProjectReveal } from "./ProjectReveal";
@@ -26,7 +27,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     params: { slug },
   });
 
-  return { title: project?.title };
+  if (!project) return {};
+
+  const title = project.seo?.title || project.title;
+  const description =
+    project.seo?.description || portableTextToPlainText(project.description);
+  const image =
+    project.seo?.image?.asset?.url || project.gallery?.[0]?.image?.asset?.url;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: `/archive/${slug}` },
+    openGraph: {
+      title,
+      description,
+      url: `/archive/${slug}`,
+      images: image ? [{ url: image }] : undefined,
+    },
+    twitter: {
+      title,
+      description,
+      images: image ? [image] : undefined,
+    },
+  };
 }
 
 export default async function ProjectPage({ params }: Props) {
@@ -48,7 +72,7 @@ export default async function ProjectPage({ params }: Props) {
           </div>
 
           {project.gallery && project.gallery.length > 0 && (
-            <ProjectGallery images={project.gallery} />
+            <ProjectGallery images={project.gallery} title={project.title} />
           )}
         </div>
         <div className={styles.article__content__close}>

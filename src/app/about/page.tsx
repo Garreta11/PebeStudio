@@ -3,13 +3,30 @@ import type { Metadata } from "next";
 
 import { sanityFetch } from "@/sanity/lib/live";
 import { ABOUT_QUERY } from "@/sanity/lib/queries";
+import { portableTextToPlainText } from "@/lib/seo";
 import { Header } from "../components/Header";
 import { AboutReveal } from "./AboutReveal";
 import styles from "./page.module.scss";
 
-export const metadata: Metadata = {
-  title: "About",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { data: about } = await sanityFetch({ query: ABOUT_QUERY });
+  const description = portableTextToPlainText(about?.mainDescription);
+
+  return {
+    title: "About",
+    description,
+    alternates: { canonical: "/about" },
+    openGraph: {
+      title: "About — PEBE STUDIO",
+      description,
+      url: "/about",
+    },
+    twitter: {
+      title: "About — PEBE STUDIO",
+      description,
+    },
+  };
+}
 
 const SOCIAL_LABELS: Record<string, string> = {
   instagram: "Instagram",

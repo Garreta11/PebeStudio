@@ -13,6 +13,7 @@ type GalleryItem = NonNullable<
 
 type Props = {
   images: GalleryItem[];
+  title: string;
 };
 
 // Minimum horizontal swipe distance (px) before a touch drag counts as a
@@ -24,7 +25,7 @@ const SWIPE_THRESHOLD = 50;
 // desktop tap-to-navigate view.
 const MOBILE_QUERY = "(max-width: 700px)";
 
-function renderMedia(item: GalleryItem) {
+function renderMedia(item: GalleryItem, title: string) {
   return item.mediaType === "video" && item.videoUrl ? (
     <video
       key={item.videoUrl}
@@ -43,12 +44,12 @@ function renderMedia(item: GalleryItem) {
       key={item.image.asset._id}
       className={styles.article__content__media__image}
       src={item.image.asset.url}
-      alt={item.image.alt || ""}
+      alt={item.image.alt || title}
     />
   ) : null;
 }
 
-export function ProjectGallery({ images }: Props) {
+export function ProjectGallery({ images, title }: Props) {
   const [index, setIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const current = images[index];
@@ -222,17 +223,17 @@ export function ProjectGallery({ images }: Props) {
             onTransitionEnd={handleTrackTransitionEnd}
           >
             <div className={styles.article__content__media__slide}>
-              {renderMedia(images[prevIndex])}
+              {renderMedia(images[prevIndex], title)}
             </div>
             <div className={styles.article__content__media__slide}>
-              {renderMedia(current)}
+              {renderMedia(current, title)}
             </div>
             <div className={styles.article__content__media__slide}>
-              {renderMedia(images[nextIndex])}
+              {renderMedia(images[nextIndex], title)}
             </div>
           </div>
         ) : (
-          renderMedia(current)
+          renderMedia(current, title)
         )}
       </div>
       <p ref={counterRef} className={styles.article__content__media__counter}>

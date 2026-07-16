@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { sanityFetch } from "@/sanity/lib/live";
@@ -6,14 +7,38 @@ import styles from "./page.module.scss";
 import { Header } from "./components/Header";
 import { HomeCarousel } from "./components/HomeCarousel";
 
-export default async function Home() {
-  const [{ data: settings }, { data: homepage }] = await Promise.all([
-    sanityFetch({ query: SITE_SETTINGS_QUERY }),
-    sanityFetch({ query: HOMEPAGE_QUERY }),
-  ]);
+export async function generateMetadata(): Promise<Metadata> {
+  const { data: settings } = await sanityFetch({ query: SITE_SETTINGS_QUERY });
 
-  const title = settings?.title || "Pebe Studio";
-  const tagline = settings?.tagline || "Portfolio";
+  const title = settings?.seo?.title || settings?.title || "PEBE STUDIO";
+  const description =
+    settings?.seo?.description ||
+    settings?.description ||
+    settings?.tagline ||
+    undefined;
+  const image = settings?.seo?.image?.asset?.url;
+
+  return {
+    title: { absolute: title },
+    description,
+    alternates: { canonical: "/" },
+    openGraph: {
+      title,
+      description,
+      url: "/",
+      images: image ? [{ url: image }] : undefined,
+    },
+    twitter: {
+      title,
+      description,
+      images: image ? [image] : undefined,
+    },
+  };
+}
+
+export default async function Home() {
+  const { data: homepage } = await sanityFetch({ query: HOMEPAGE_QUERY });
+
   const items = homepage?.items ?? [];
 
   return (

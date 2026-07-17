@@ -3,14 +3,30 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
+import { sanityImageUrl } from "@/sanity/lib/image";
 import styles from "./HomeCarousel.module.scss";
 
 type HomeCarouselItem = {
   mediaType: "image" | "gif" | "video";
-  image: { asset: { url: string } | null; alt: string | null } | null;
+  image: {
+    asset: {
+      url: string;
+      metadata?: {
+        lqip?: string | null;
+        dimensions?: { width: number; height: number } | null;
+      } | null;
+    } | null;
+    alt: string | null;
+  } | null;
   videoUrl: string | null;
   project: { title: string; slug: string };
 };
+
+// The row is always 100dvh tall (see page.module.scss), so requesting a
+// height-capped, format/quality-optimized asset (instead of the raw,
+// often multi-megabyte Sanity original) covers every real viewport while
+// cutting payload size by an order of magnitude or more.
+const IMAGE_HEIGHT = 1800;
 
 type Props = {
   items: HomeCarouselItem[];
@@ -231,6 +247,11 @@ export function HomeCarousel({ items }: Props) {
         {Array.from({ length: COPIES }).map((_, copyIndex) =>
           items.map((item, itemIndex) => {
             const alt = item.image?.alt || item.project.title;
+            const dimensions = item.image?.asset?.metadata?.dimensions;
+            // Middle copy is where the carousel opens, so it loads eagerly;
+            // the two wrap-around copies only need to be there once the
+            // user has scrolled far enough to reach them.
+            const isPrimaryCopy = copyIndex === 1;
             return (
               <Link
                 key={`${copyIndex}-${itemIndex}`}
@@ -251,6 +272,7 @@ export function HomeCarousel({ items }: Props) {
                     muted
                     loop
                     playsInline
+                    preload={isPrimaryCopy ? "auto" : "metadata"}
                     onDragStart={(e) => e.preventDefault()}
                   />
                 ) : item.image?.asset?.url ? (
@@ -259,8 +281,21 @@ export function HomeCarousel({ items }: Props) {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     className={styles.media}
-                    src={item.image.asset.url}
+                    src={sanityImageUrl(item.image.asset.url, {
+                      height: IMAGE_HEIGHT,
+                      animated: item.mediaType === "gif",
+                    })}
                     alt={alt}
+                    width={dimensions?.width}
+                    height={dimensions?.height}
+                    loading={isPrimaryCopy ? "eager" : "lazy"}
+                    fetchPriority={isPrimaryCopy ? "high" : "low"}
+                    decoding="async"
+                    style={
+                      item.image.asset.metadata?.lqip
+                        ? { backgroundImage: `url(${item.image.asset.metadata.lqip})` }
+                        : undefined
+                    }
                     onDragStart={(e) => e.preventDefault()}
                   />
                 ) : null}

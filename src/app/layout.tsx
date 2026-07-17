@@ -58,7 +58,7 @@ export default async function RootLayout({
       lang="en"
       className={`${styles.html} ${groteskFont.variable}`}
     >
-      <body className={styles.body}>
+      <body className={styles.body} suppressHydrationWarning>
         <Header />
         {children}
         <CustomCursor />

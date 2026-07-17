@@ -40,6 +40,9 @@
   width: auto;
   max-width: none;
   object-fit: contain;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   pointer-events: none;
   -webkit-user-drag: none;
   scale: 1;

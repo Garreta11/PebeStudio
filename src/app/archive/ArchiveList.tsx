@@ -5,8 +5,13 @@ import { useRouter } from "next/navigation";
 import { useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 
+import { sanityImageUrl } from "@/sanity/lib/image";
 import type { PROJECTS_QUERY_RESULT } from "../../../sanity.types";
 import styles from "./page.module.scss";
+
+// The hover preview is a fixed 200px-wide box (see page.module.scss); 400px
+// covers retina displays without shipping the full-resolution original.
+const PREVIEW_WIDTH = 400;
 
 type Props = {
   projects: PROJECTS_QUERY_RESULT;
@@ -143,9 +148,13 @@ export function ArchiveList({ projects }: Props) {
           {hoveredProject?.coverImage?.asset?.url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={hoveredProject.coverImage.asset.url}
+              src={sanityImageUrl(hoveredProject.coverImage.asset.url, {
+                width: PREVIEW_WIDTH,
+              })}
               alt={hoveredProject.coverImage.alt || hoveredProject.title}
               className={styles.previewImage}
+              loading="lazy"
+              decoding="async"
             />
           ) : (
             <div className={styles.previewFallback} />

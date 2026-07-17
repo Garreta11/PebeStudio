@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 
 import { setCursorVariant } from "../../components/CustomCursor";
+import { sanityImageUrl } from "@/sanity/lib/image";
 import type { PROJECT_QUERY_RESULT } from "../../../../sanity.types";
 import styles from "./page.module.scss";
 
@@ -16,6 +17,12 @@ type Props = {
   title: string;
 };
 
+// The gallery media area is always the full flex height of the article
+// (see page.module.scss), so a height-capped, format/quality-optimized
+// asset covers every real viewport while cutting payload size drastically
+// compared to the raw Sanity original.
+const IMAGE_HEIGHT = 1800;
+
 // Minimum horizontal swipe distance (px) before a touch drag counts as a
 // slide change, so small taps/scroll jitter don't trigger navigation.
 const SWIPE_THRESHOLD = 50;
@@ -25,7 +32,7 @@ const SWIPE_THRESHOLD = 50;
 // desktop tap-to-navigate view.
 const MOBILE_QUERY = "(max-width: 700px)";
 
-function renderMedia(item: GalleryItem, title: string) {
+function renderMedia(item: GalleryItem, title: string, priority: boolean) {
   return item.mediaType === "video" && item.videoUrl ? (
     <video
       key={item.videoUrl}
@@ -35,6 +42,7 @@ function renderMedia(item: GalleryItem, title: string) {
       muted
       loop
       playsInline
+      preload={priority ? "auto" : "metadata"}
     />
   ) : item.image?.asset?.url ? (
     // Native <img>/<video> so each item keeps its own aspect ratio instead
@@ -43,8 +51,16 @@ function renderMedia(item: GalleryItem, title: string) {
     <img
       key={item.image.asset._id}
       className={styles.article__content__media__image}
-      src={item.image.asset.url}
+      src={sanityImageUrl(item.image.asset.url, {
+        height: IMAGE_HEIGHT,
+        animated: item.mediaType === "gif",
+      })}
       alt={item.image.alt || title}
+      width={item.image.asset.metadata?.dimensions?.width}
+      height={item.image.asset.metadata?.dimensions?.height}
+      loading={priority ? "eager" : "lazy"}
+      fetchPriority={priority ? "high" : "low"}
+      decoding="async"
     />
   ) : null;
 }
@@ -223,17 +239,17 @@ export function ProjectGallery({ images, title }: Props) {
             onTransitionEnd={handleTrackTransitionEnd}
           >
             <div className={styles.article__content__media__slide}>
-              {renderMedia(images[prevIndex], title)}
+              {renderMedia(images[prevIndex], title, false)}
             </div>
             <div className={styles.article__content__media__slide}>
-              {renderMedia(current, title)}
+              {renderMedia(current, title, true)}
             </div>
             <div className={styles.article__content__media__slide}>
-              {renderMedia(images[nextIndex], title)}
+              {renderMedia(images[nextIndex], title, false)}
             </div>
           </div>
         ) : (
-          renderMedia(current, title)
+          renderMedia(current, title, true)
         )}
       </div>
       <p ref={counterRef} className={styles.article__content__media__counter}>
